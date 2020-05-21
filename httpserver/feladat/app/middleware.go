@@ -16,8 +16,7 @@ var nameContextKey = contextKey("name")
 
 func (a *App) authMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// TODO(feladat): kerd le az "Authorization" header erteket a `code` valtozoba
-		code := "" // <???>
+		code := r.Header.Get("Authorization")
 		if code == "" {
 			sendError(a.logger, w, errors.New("empty code"), http.StatusUnauthorized)
 			return
@@ -32,7 +31,7 @@ func (a *App) authMiddleware(next http.Handler) http.Handler {
 
 		context.WithValue(r.Context(), nameContextKey, name)
 		// TODO(feladat): fejezd be a http handlert, hogy tovabb adja a vezerlest a megfelelo context-el
-		// <???>
+		next.ServeHTTP(w, r.WithContext(r.Context()))
 	})
 }
 
